@@ -16,8 +16,7 @@ public class KafkaEvents {
     @Channel("quotation-channel")
     private Emitter<QuotationDto> emitter;
 
-    @Inject
-    private void sendMessage(QuotationDto quotationDto) {
+    public void sendMessage(QuotationDto quotationDto) {
         Log.info("---enviando a mensagem quotation ----");
         emitter.send(quotationDto).toCompletableFuture().join();
     }

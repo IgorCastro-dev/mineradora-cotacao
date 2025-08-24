@@ -10,7 +10,7 @@ import java.util.Date;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(schema = "quotation")
+@Table(name = "quotation")
 public class QuotationEntity {
 
     @Id
@@ -19,7 +19,7 @@ public class QuotationEntity {
 
     private Date date;
 
-    @Column(name = "current_price")
+    @Column(name = "current_price", precision = 10, scale = 4)
     private BigDecimal currentPrice;
 
     @Column(name = "pct_change")

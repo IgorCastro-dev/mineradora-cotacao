@@ -11,6 +11,8 @@ import org.mineradora.message.KafkaEvents;
 import org.mineradora.repository.QuotationRepository;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Optional;
 
@@ -32,7 +34,7 @@ public class QuotationService {
 
         if (updateCurentPrice(currentPriceInfo)){
             kafkaEvents.sendMessage(QuotationDto.builder()
-                    .currencyPrice(new BigDecimal(currentPriceInfo.getUsdbrl().getBid()))
+                    .currencyPrice(new BigDecimal(currentPriceInfo.getUSDBRL().getBid()))
                     .date(new Date())
                     .build()
             );
@@ -41,7 +43,7 @@ public class QuotationService {
 
     private boolean updateCurentPrice(CurrencyPriceDTO currentPriceInfo) {
         Optional<QuotationEntity> lastQuotation = quotationRepository.findLastQuotation();
-        BigDecimal currentPrice = new BigDecimal(currentPriceInfo.getUsdbrl().getBid());
+        BigDecimal currentPrice = new BigDecimal(currentPriceInfo.getUSDBRL().getBid());
         if (lastQuotation.isEmpty()) {
             saveQuotation(currentPriceInfo);
             return true;
@@ -55,8 +57,10 @@ public class QuotationService {
     private void saveQuotation(CurrencyPriceDTO currentPriceInfo) {
         QuotationEntity quotationEntity = new QuotationEntity();
         quotationEntity.setDate(new Date());
-        quotationEntity.setCurrentPrice(new BigDecimal(currentPriceInfo.getUsdbrl().getBid()));
-        quotationEntity.setPctChange(currentPriceInfo.getUsdbrl().getPctChange());
+        String bidString = currentPriceInfo.getUSDBRL().getBid(); // "5.4207"
+        BigDecimal bid = new BigDecimal(bidString).setScale(4, RoundingMode.HALF_UP);
+        quotationEntity.setCurrentPrice(bid);
+        quotationEntity.setPctChange(currentPriceInfo.getUSDBRL().getPctChange());
         quotationEntity.setPair("USD-BRL");
         quotationRepository.persist(quotationEntity);
     }

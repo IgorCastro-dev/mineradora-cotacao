@@ -27,7 +27,7 @@ public class QuotationService {
     @Inject
     public KafkaEvents kafkaEvents;
 
-    public void getCurrencyPrice(CurrencyPriceDTO currencyPriceDTO){
+    public void getCurrencyPrice(){
         CurrencyPriceDTO currentPriceInfo = currencyPriceCliente.getPricePair("USD-BRL");
 
         if (updateCurentPrice(currentPriceInfo)){
